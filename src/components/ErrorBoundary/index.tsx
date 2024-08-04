@@ -47,6 +47,7 @@ class ErrorBoundaryInner extends React.Component<{
   onError: (error: Error) => void;
 }> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.log('ErrorBoundary caught an error:', errorInfo);
     this.props.onError(error);
   }
 
