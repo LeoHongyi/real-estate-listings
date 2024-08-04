@@ -1,0 +1,44 @@
+.property-list-item {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  background-color: var(--background-color);
+}
+
+.property-list-item:hover {
+  background-color: var(--hover-background-color);
+}
+
+.property-list-item h2 {
+  margin: 0 0 8px 0;
+  color: var(--title-color);
+}
+
+.property-list-item p {
+  margin: 0 0 8px 0;
+  color: var(--text-color);
+}
+
+.property-list-item .rent {
+  font-weight: bold;
+  color: var(--rent-color);
+}
+
+.property-list-item .status {
+  margin: 0;
+}
+
+.property-list-item .status.occupied {
+  color: var(--occupied-color);
+}
+
+.property-list-item .status.vacant {
+  color: var(--vacant-color);
+}
+
+.property-list-item .status.maintenance {
+  color: var(--maintenance-color);
+}
