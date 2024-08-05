@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { usePropertyContext } from '../../context/PropertyContext';
 import { Link, useParams } from 'react-router-dom';
 import { PropertyDetailsSkeleton } from '../PropertyDetailsSkeleton';
