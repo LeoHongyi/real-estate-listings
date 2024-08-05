@@ -96,6 +96,10 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       fetchProperties,
       fetchPropertyDetails,
       clearPropertyDetails,
+      currentPage,
+      totalPages,
+      propertyDetailsError,
+      pageSize,
     }),
     [
       properties,
@@ -106,6 +110,10 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       fetchProperties,
       fetchPropertyDetails,
       clearPropertyDetails,
+      currentPage,
+      totalPages,
+      propertyDetailsError,
+      pageSize,
     ],
   );
   return <PropertyContext.Provider value={value}>{children}</PropertyContext.Provider>;
