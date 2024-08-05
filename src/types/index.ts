@@ -1,4 +1,3 @@
-// types.ts
 export interface Address {
   street: string;
   city: string;
@@ -11,7 +10,15 @@ export interface PropertyManager {
   contact: string;
 }
 
-export interface PropertyListingItem {
+export interface PropertyDetails {
+  yearBuilt: number;
+  unitTypes: string[];
+  amenities: string[];
+  petPolicy: string;
+  description: string;
+}
+
+export interface Property {
   id: number;
   propertyName: string;
   address: Address;
@@ -19,14 +26,14 @@ export interface PropertyListingItem {
   propertyManager: PropertyManager;
   monthlyRent: number;
   status: string;
+  propertyDetails: PropertyDetails;
+  del?: boolean;
 }
 
-export interface PropertyDetails extends PropertyListingItem {
-  propertyDetails: {
-    yearBuilt: number;
-    unitTypes: string[];
-    amenities: string[];
-    petPolicy: string;
-    description: string;
-  };
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { usePropertyContext } from '../../context/PropertyContext';
 import { Link, useParams } from 'react-router-dom';
 import { PropertyDetailsSkeleton } from '../PropertyDetailsSkeleton';
@@ -8,60 +8,67 @@ import './index.css';
 export const PropertyDetails: React.FC = () => {
   useAsyncError();
   const { id } = useParams<{ id: string }>();
-  const { detailsLoading, detailsError, propertyDetails, fetchPropertyDetails } =
+  const { propertyDetails, propertyDetailsLoading, propertyDetailsError, fetchPropertyDetails } =
     usePropertyContext();
-  const [localDetails, setLocalDetails] = useState(propertyDetails);
-
-  const fetchDetails = useCallback(() => {
-    if (id) {
-      fetchPropertyDetails(id);
-    }
-  }, [id, fetchPropertyDetails]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!propertyDetails && id) {
-      fetchDetails();
-    } else {
-      setLocalDetails(propertyDetails);
-    }
-  }, [id, propertyDetails, fetchDetails]);
+    let isMounted = true;
+    const loadData = async () => {
+      if (id) {
+        setIsLoading(true);
+        await fetchPropertyDetails(parseInt(id, 10));
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
 
-  if (detailsLoading && !localDetails) {
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id, fetchPropertyDetails]);
+
+  if (isLoading || propertyDetailsLoading) {
     return <PropertyDetailsSkeleton />;
   }
 
-  if (detailsError) {
-    return <div className="property-details error">Error: {detailsError.message}</div>;
+  if (propertyDetailsError) {
+    return <div className="property-details error">Error: {propertyDetailsError?.message}</div>;
   }
 
-  if (!localDetails) {
-    return <div className="property-details not-found">No property details found.</div>;
+  if (!propertyDetails) {
+    return <div className="property-details">No property details available</div>;
   }
 
   return (
     <div className="property-details">
-      <h1>{localDetails.propertyName}</h1>
+      <h1>{propertyDetails.propertyName}</h1>
       <p className="address">
-        {localDetails.address.street}, {localDetails.address.city}, {localDetails.address.state}{' '}
-        {localDetails.address.zipCode}
+        {propertyDetails.address.street}, {propertyDetails.address.city},{' '}
+        {propertyDetails.address.state} {propertyDetails.address.zipCode}
       </p>
       <div className="info-grid">
         <p>
-          Monthly Rent: <span>${localDetails.monthlyRent}</span>
+          Monthly Rent: <span>${propertyDetails.monthlyRent}</span>
         </p>
         <p>
-          Status: <span>{localDetails.status}</span>
+          Status: <span>{propertyDetails.status}</span>
         </p>
         <p>
-          Year Built: <span>{localDetails.propertyDetails.yearBuilt}</span>
+          Year Built: <span>{propertyDetails.propertyDetails?.yearBuilt}</span>
         </p>
         <p>
-          Unit Types: <span>{localDetails.propertyDetails.unitTypes.join(', ')}</span>
+          Unit Types: <span>{propertyDetails.propertyDetails?.unitTypes.join(', ')}</span>
         </p>
       </div>
-      <p className="amenities">Amenities: {localDetails.propertyDetails.amenities.join(', ')}</p>
-      <p className="pet-policy">Pet Policy: {localDetails.propertyDetails.petPolicy}</p>
-      <p className="description">Description: {localDetails.propertyDetails.description}</p>
+      <p className="amenities">
+        Amenities: {propertyDetails.propertyDetails?.amenities.join(', ')}
+      </p>
+      <p className="pet-policy">Pet Policy: {propertyDetails.propertyDetails?.petPolicy}</p>
+      <p className="description">Description: {propertyDetails.propertyDetails?.description}</p>
       <Link to="/" className="back-link">
         Back to listings
       </Link>
