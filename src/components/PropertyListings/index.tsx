@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { usePropertyContext } from '../../context/PropertyContext';
 import { PropertyListItem } from '../PropertyListItem';
 import { PropertyListingSkeleton } from '../PropertyListingSkeleton';
@@ -14,26 +14,11 @@ export const PropertyListings: React.FC = () => {
     loading: contextLoading,
   } = usePropertyContext();
 
-  const [localLoading, setLocalLoading] = useState(true);
-
   useEffect(() => {
-    const loadProperties = async () => {
-      setLocalLoading(true);
-      try {
-        await fetchProperties(currentPage);
-      } catch (error) {
-        console.error('Failed to fetch properties:', error);
-      } finally {
-        setLocalLoading(false);
-      }
-    };
-
-    loadProperties();
+    fetchProperties(currentPage);
   }, [currentPage, fetchProperties]);
 
-  const isLoading = contextLoading || localLoading;
-
-  if (isLoading) {
+  if (contextLoading) {
     return <PropertyListingSkeleton />;
   }
 
