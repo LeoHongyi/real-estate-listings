@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useCallback, useRef } from 'react';
+import React, { createContext, useState, useContext, useCallback, useRef, useMemo } from 'react';
 import { Property, PaginatedResult } from '../types';
 import { PropertyDatabase } from '../repository';
 
@@ -14,6 +14,7 @@ interface PropertyContextType {
   propertyDetailsLoading: boolean;
   propertyDetailsError: Error | null;
   fetchPropertyDetails: (id: number) => Promise<void>;
+  clearPropertyDetails: () => void;
 }
 
 const PropertyContext = createContext<PropertyContextType | undefined>(undefined);
@@ -32,6 +33,9 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const propertyDatabase = new PropertyDatabase();
 
+  const clearPropertyDetails = useCallback(() => {
+    setPropertyDetails(null);
+  }, []);
   const propertiesCache = useRef<Record<number, Property[]>>({});
   const propertyDetailsCache = useRef<Record<number, Property>>({}); // Cache property details by ID
 
@@ -82,25 +86,29 @@ export const PropertyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, []);
 
-  return (
-    <PropertyContext.Provider
-      value={{
-        properties,
-        loading,
-        error,
-        totalPages,
-        currentPage,
-        pageSize,
-        fetchProperties,
-        propertyDetails,
-        propertyDetailsLoading,
-        propertyDetailsError,
-        fetchPropertyDetails,
-      }}
-    >
-      {children}
-    </PropertyContext.Provider>
+  const value = useMemo(
+    () => ({
+      properties,
+      propertyDetails,
+      loading,
+      propertyDetailsLoading,
+      error,
+      fetchProperties,
+      fetchPropertyDetails,
+      clearPropertyDetails,
+    }),
+    [
+      properties,
+      propertyDetails,
+      loading,
+      propertyDetailsLoading,
+      error,
+      fetchProperties,
+      fetchPropertyDetails,
+      clearPropertyDetails,
+    ],
   );
+  return <PropertyContext.Provider value={value}>{children}</PropertyContext.Provider>;
 };
 
 export const usePropertyContext = () => {

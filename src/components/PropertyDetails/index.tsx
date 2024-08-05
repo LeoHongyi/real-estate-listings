@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { usePropertyContext } from '../../context/PropertyContext';
 import { Link, useParams } from 'react-router-dom';
 import { PropertyDetailsSkeleton } from '../PropertyDetailsSkeleton';
@@ -8,14 +8,26 @@ import './index.css';
 export const PropertyDetails: React.FC = () => {
   useAsyncError();
   const { id } = useParams<{ id: string }>();
-  const { propertyDetails, propertyDetailsLoading, propertyDetailsError, fetchPropertyDetails } =
-    usePropertyContext();
+  const {
+    propertyDetails,
+    propertyDetailsLoading,
+    clearPropertyDetails,
+    propertyDetailsError,
+    fetchPropertyDetails,
+  } = usePropertyContext();
 
-  useEffect(() => {
+  const loadPropertyDetails = useCallback(() => {
     if (id) {
       fetchPropertyDetails(parseInt(id, 10));
     }
   }, [id, fetchPropertyDetails]);
+  useEffect(() => {
+    clearPropertyDetails();
+    loadPropertyDetails();
+    return () => {
+      clearPropertyDetails();
+    };
+  }, [id, clearPropertyDetails, loadPropertyDetails]);
 
   if (!propertyDetails || propertyDetailsLoading) {
     return <PropertyDetailsSkeleton />;
