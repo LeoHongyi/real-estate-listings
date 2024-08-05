@@ -10,28 +10,14 @@ export const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { propertyDetails, propertyDetailsLoading, propertyDetailsError, fetchPropertyDetails } =
     usePropertyContext();
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true;
-    const loadData = async () => {
-      if (id) {
-        setIsLoading(true);
-        await fetchPropertyDetails(parseInt(id, 10));
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
+    if (id) {
+      fetchPropertyDetails(parseInt(id, 10));
+    }
   }, [id, fetchPropertyDetails]);
 
-  if (isLoading || propertyDetailsLoading) {
+  if (!propertyDetails || propertyDetailsLoading) {
     return <PropertyDetailsSkeleton />;
   }
 

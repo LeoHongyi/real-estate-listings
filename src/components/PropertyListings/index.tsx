@@ -18,7 +18,7 @@ export const PropertyListings: React.FC = () => {
     fetchProperties(currentPage);
   }, [currentPage, fetchProperties]);
 
-  if (contextLoading) {
+  if (contextLoading || !properties) {
     return <PropertyListingSkeleton />;
   }
 
